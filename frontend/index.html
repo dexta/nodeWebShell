@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>node socket web shell</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/xterm.css">
+  </head>
+<body>    
+
+<div class="container">
+  <hello></hello>
+  <terminal></terminal>
+</div>
+
+<!-- include extern librarys -->
+<script src="js/superagent.js"></script>
+<script src="js/xterm.js"></script>
+<script src="js/addons/fit/fit.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- include components -->
+<script src="components/hello.tag" type="riot/tag"></script>
+<script src="components/terminal.tag" type="riot/tag"></script>
+
+<!-- include riot.js and the compiler -->
+<script src="js/riot+compiler.js"></script>
+
+<!-- <script src="js/indexed.js"></script> -->
+
+<script type="text/javascript">
+  riot.mount('*');
+  var socket = io();
+  Terminal.applyAddon(fit);
+  
+  socket.on('connection', (socket) => {
+    console.log("connection to socket.io");
+      socket.on('newLine', (line) => {
+        console.log(line);
+      });
+  });
+
+</script>
+
+</body>
+</html>
