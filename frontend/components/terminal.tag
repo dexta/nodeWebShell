@@ -1,6 +1,9 @@
 <terminal>
 	<div class="row">
 		<div class="col-lg-12 col-md-12 col-xs-12" >
+			<span ref="sameline">nix</span>
+		</div>
+		<div class="col-lg-12 col-md-12 col-xs-12" >
 			<div id="terminal" class="terminal-container">
 			</div>
 		</div>
@@ -22,6 +25,10 @@ socket.on('newLine', (line) => {
   for(let s in splitLines) {
 	  that.term.writeln(splitLines[s]);	
   }
+});
+
+socket.on('sameLine', (line) => {
+	that.refs.sameline.innerHTML = line;
 });
 
 </script>

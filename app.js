@@ -9,6 +9,8 @@ const DEFAULT_HOST = '0.0.0.0';
 const DEFAULT_PORT = 3000;
 
 const config = {};
+const host = config.host || DEFAULT_HOST;
+const port = config.port || DEFAULT_PORT;
 
 let state = {run:false,lines:[]};
 
@@ -37,16 +39,29 @@ app.post('/releasethekraken', (req, res) =>{
   }
 });
 
-const host = config.host || DEFAULT_HOST;
-const port = config.port || DEFAULT_PORT;
+app.get('/startscript/:name', (req,res) => {
+  // let cmd = 'K6_OUT=influxdb=http://lxmoncol02:8086/loadtests k6';
+  // let parameter = `run scripts/${req.params.name}.js`;
+  let cmd = './startScripts.sh';
+  let parameter = ['-s',req.params.name];
 
-
+  let opts = {cmd, parameter};
+  console.dir(opts);
+  let plcmd = execCommand(opts);
+  if(plcmd||false) {
+    res.status(404).json({err:plcmd.err,data:req.body});
+  } else {
+    res.status(200).json(req.body);
+  }
+});
 
 http.listen(port, () => {
   console.log(`Running on http://${host}:${port}`); 
 });
 
 const execCommand = (cmdObj) => {
+  console.log("execCommand parameter obj");
+  console.dir(cmdObj);
   if(state.run) return {err:'A Command already running'}
   try {
     stats = fs.existsSync(cmdObj.cmd);
@@ -69,6 +84,7 @@ const execCommand = (cmdObj) => {
 
   ls.stderr.on('data', function(data){
     console.log(data.toString());
+    io.sockets.emit("sameLine",data.toString('utf-8'))
   });
 
   ls.on('close', function (code){
