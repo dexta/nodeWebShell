@@ -13,6 +13,8 @@ const host = config.host || DEFAULT_HOST;
 const port = config.port || DEFAULT_PORT;
 
 let state = {run:false,lines:[]};
+let scriptSpawn = {};
+
 
 app.use(express.static('frontend'));
 app.use(bodyParser.json());
@@ -36,6 +38,15 @@ app.post('/releasethekraken', (req, res) =>{
     res.status(404).json({err:plcmd.err,data:req.body});
   } else {
     res.status(200).json(req.body);
+  }
+});
+
+app.get('/killscript', (req,res) => {
+  try {
+    process.kill(-scriptSpawn.pid);
+    res.status(200).send('we killed it '+scriptSpawn.pid);
+  } catch (e) {
+    res.status(400).send('no killer found for ... '+scriptSpawn.pid);
   }
 });
 
@@ -71,10 +82,10 @@ const execCommand = (cmdObj) => {
   }
 
   
-  const ls = spawn(cmdObj.cmd, cmdObj.parameter);
+  scriptSpawn = spawn(cmdObj.cmd, cmdObj.parameter,{detached: true});
   state.run=true;
 
-  ls.stdout.on('data', function(data){
+  scriptSpawn.stdout.on('data', function(data){
     let clrd = data.toString('utf-8');
     // .replace(/\r$/g, '\r\n');
     // console.log(clrd);
@@ -82,16 +93,18 @@ const execCommand = (cmdObj) => {
     io.sockets.emit("newLine",clrd);
   });
 
-  ls.stderr.on('data', function(data){
+  scriptSpawn.stderr.on('data', function(data){
     console.log(data.toString());
     io.sockets.emit("sameLine",data.toString('utf-8'))
   });
 
-  ls.on('close', function (code){
+  scriptSpawn.on('close', function (code){
     console.log(`child process exited with code ${code}`);
     io.sockets.emit("newLine", `exit: ${code}`);
     state.run=false;
   });
+
+  scriptSpawn.unref();
 };
 
 const welcomeLoop = () => {
