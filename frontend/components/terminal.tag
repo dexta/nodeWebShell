@@ -55,7 +55,7 @@ socket.on('sameLine', (line) => {
 	// time="2018-10-05T06:02:28Z" level=info msg=Running i=0 t=2m34.945110349s
 	let spl = line.split(" ");
 	let lineObj = {};
-	spl.forEach( (e,i) => { let sl = e.split("="); lineObj[sl[0]]=sl[1]; } );
+	spl.forEach( (e,i) => { let sl = e.split("="); lineObj[sl[0]]=sl[1].replace(/\"/g,''); } );
 	console.dir(lineObj);
 	that.infoline = lineObj;
 	that.update();
