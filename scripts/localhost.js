@@ -1,4 +1,4 @@
-import { group, check } from "k6";
+import { group, check, sleep } from "k6";
 import http from "k6/http";
 
 export let options = {
@@ -7,29 +7,39 @@ export let options = {
     'http_req_duration{kind:css}': ["avg<=10"],
     'http_req_duration{kind:img}': ["avg<=100"],
     'http_reqs': ["rate>100"],
-  }
+  },
+  "vus": 100,
+  "duration": "2m"
 };
 
 export default function() {
-  group("front page", function() {
-    check(http.get("http://localhost:8080/", {
-      tags: {'kind': 'html' },
-    }), {
-      "status is 200": (res) => res.status === 200,
+  let res = http.get("http://192.168.23.55:7423/search/key/500/service.%25");
+    check(res, {
+        "is status 200": (r) => r.status === 200
+    });
+    sleep(3);
+  group("all Services", () => {
+    let res = http.get("http://192.168.23.55:7423/search/key/500/service.%25live%25");
+    let jres = JSON.parse(res.body);
+    check(res, {
+      "is status 200": (r) => r.status === 200,
+      "is key correct": (r) => jres[1].key != ""
     });
   });
-  group("stylesheet", function() {
-    check(http.get("http://localhost:8080/style.css", {
-      tags: {'kind': 'css' },
-    }), {
-      "status is 200": (res) => res.status === 200,
+  group("all HELLO service entrys", () => {
+    let res = http.get("http://192.168.23.55:7423/search/key/500/service.hello%25");
+    let jres = JSON.parse(res.body);
+    check(res, {
+      "is status 200": (r) => r.status === 200,
+      "is key correct": (r) => jres[1].key != ""
     });
   });
-  group("image", function() {
-    check(http.get("http://localhost:8080/teddy.jpg", {
-      tags: {'kind': 'img' },
-    }), {
-      "status is 200": (res) => res.status === 200,
+  group("all live services", () => {
+    let res = http.get("http://192.168.23.55:7423/search/key/500/service.%25live%25");
+    let jres = JSON.parse(res.body);
+    check(res, {
+      "is status 200": (r) => r.status === 200,
+      "is key correct": (r) => jres[1].key != ""
     });
-  });
+  });    
 }
