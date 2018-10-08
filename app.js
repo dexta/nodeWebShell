@@ -60,7 +60,6 @@ echo "start temp Script "\n`;
     tSs += `${b}=${req.body[b]}\n`;
   }
 
-
   // env varibales before k6 bin is called
   if(req.body.statOutput||false) tSs += 'K6_OUT=influxdb=http://192.168.23.55:8086/k6 ';
 
