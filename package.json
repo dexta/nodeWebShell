@@ -22,7 +22,7 @@
     "express": "^4.16.4",
     "nodemon": "^1.18.7",
     "socket.io": "^2.2.0",
-    "xterm": "^3.8.0"
+    "xterm": "^3.8.1"
   },
   "devDependencies": {},
   "repository": {
