@@ -18,11 +18,11 @@
   "author": "dexta.de@gmail.com",
   "license": "GPL-3.0",
   "dependencies": {
-    "chart.js": "^2.7.2",
-    "express": "^4.16.3",
-    "nodemon": "^1.18.4",
-    "socket.io": "^2.1.1",
-    "xterm": "^3.5.0"
+    "chart.js": "^2.7.3",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.7",
+    "socket.io": "^2.2.0",
+    "xterm": "^3.8.0"
   },
   "devDependencies": {},
   "repository": {
