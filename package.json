@@ -21,7 +21,7 @@
     "chart.js": "^2.7.3",
     "express": "^4.16.4",
     "nodemon": "^1.18.7",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.0",
     "xterm": "^3.8.0"
   },
   "devDependencies": {},
